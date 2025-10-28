@@ -20,6 +20,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Mail, Calendar, Award, TrendingUp, Edit2 } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 const mockUserData = {
   name: "John Doe",
@@ -90,6 +91,12 @@ const progressData = [
 ];
 
 export default function ProfilePage() {
+  const { isSignedIn, user, isLoaded } = useUser();
+  if (!isLoaded) {
+    return <div>loading</div>;
+  }
+  console.log(user);
+  console.log(user.createdAt.toDateString());
   return (
     <div className="p-8">
       {/* Header */}
@@ -113,14 +120,16 @@ export default function ProfilePage() {
             {/* User Details */}
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-6">
-                {mockUserData.name}
+                {user.fullName}
               </h2>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-muted-foreground" />
                   <div>
                     <p className="text-xs text-muted-foreground">Email</p>
-                    <p className="text-foreground">{mockUserData.email}</p>
+                    <p className="text-foreground">
+                      {user.emailAddresses[0].emailAddress}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -130,21 +139,13 @@ export default function ProfilePage() {
                       Member Since
                     </p>
                     <p className="text-foreground">
-                      {new Date(mockUserData.joinDate).toLocaleDateString(
-                        "en-US",
-                        {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        }
-                      )}
+                      {user.createdAt.toDateString()}
                     </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-primary/10 rounded-lg">
                 <p className="text-xs text-muted-foreground mb-1">
@@ -181,14 +182,12 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      {/* Tabs */}
-      <Tabs defaultValue="progress" className="space-y-6">
+      {/* <Tabs defaultValue="progress" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="progress">Progress</TabsTrigger>
           <TabsTrigger value="history">Test History</TabsTrigger>
         </TabsList>
 
-        {/* Progress Tab */}
         <TabsContent value="progress" className="space-y-6">
           <Card>
             <CardHeader>
@@ -275,7 +274,6 @@ export default function ProfilePage() {
           </div>
         </TabsContent>
 
-        {/* History Tab */}
         <TabsContent value="history" className="space-y-4">
           <Card>
             <CardHeader>
@@ -330,7 +328,7 @@ export default function ProfilePage() {
             </CardContent>
           </Card>
         </TabsContent>
-      </Tabs>
+      </Tabs> */}
     </div>
   );
 }
