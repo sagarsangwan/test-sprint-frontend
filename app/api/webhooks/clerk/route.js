@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 // app/api/webhooks/clerk/route.js
 import { Webhook } from "svix";
 import prisma from "@/lib/prisma";
