@@ -1,9 +1,10 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { Sidebar } from "@/components/sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import {
   ClerkProvider,
+  RedirectToSignIn,
   SignInButton,
   SignUpButton,
   SignedIn,
@@ -24,10 +25,15 @@ export default function RootLayout({ children }) {
       <html lang="en" suppressHydrationWarning>
         <body className={`font-sans antialiased`}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="flex h-screen">
-              <Sidebar />
-              <main className="flex-1 overflow-auto md:ml-0">{children}</main>
-            </div>
+            <SignedIn>
+              <div className="flex h-screen">
+                <Sidebar />
+                <main className="flex-1 overflow-auto">{children}</main>
+              </div>
+            </SignedIn>
+            <SignedOut>
+              <RedirectToSignIn />
+            </SignedOut>
           </ThemeProvider>
         </body>
       </html>

@@ -4,3 +4,7 @@ const nextConfig = {
 };
 
 export default nextConfig;
+export const experimental = {
+  appDir: true,
+  typedRoutes: true,
+};

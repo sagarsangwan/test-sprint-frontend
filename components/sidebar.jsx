@@ -17,7 +17,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { auth } from "@clerk/nextjs/server";
-import { useAuth } from "@clerk/clerk-react";
+import { SignOutButton, useAuth } from "@clerk/clerk-react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
@@ -84,12 +84,15 @@ export function Sidebar() {
 
         <div className="p-4 border-t border-sidebar-border space-y-2">
           <ThemeToggle />
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-3 text-destructive hover:text-destructive"
-          >
-            <LogOut className="w-4 h-4" />
-          </Button>
+          <SignOutButton redirectUrl="/">
+            <Button
+              variant="ghost"
+              className="w-full justify-start gap-3 text-destructive hover:text-destructive"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </Button>
+          </SignOutButton>
         </div>
       </aside>
 
