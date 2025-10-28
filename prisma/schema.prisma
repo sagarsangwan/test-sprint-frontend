@@ -2,108 +2,103 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-
-
-
 model User {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
   name      String?
-  email     String?   @unique
-  clerkId String  @unique
   image     String?
-  createdAt DateTime  @default(now())
-
+  createdAt DateTime @default(now())
   tests     Test[]
   results   Result[]
 }
 
 model Test {
-  id              String      @id @default(cuid())
-  title           String
-  totalQuestions  Int
-  totalMarks      Int
-  totalTime       Int
-  createdAt       DateTime    @default(now())
-  pdfFileUrl      String?
-  aiStatus        String      @default("processing")
+  id             String   @id @default(cuid())
+  title          String
+  totalQuestions Int
+  totalMarks     Int
+  totalTime      Int
+  createdAt      DateTime @default(now())
+  pdfFileUrl     String?
+  aiStatus       String   @default("processing")
 
   // relations
-  user    User?     @relation(fields: [userId], references: [id])
-  userId  String?
+  user     User?     @relation(fields: [userId], references: [id])
+  userId   String?
   subjects Subject[]
   results  Result[]
 }
 
 model Subject {
-  id         String         @id @default(cuid())
-  name       String
-  test       Test           @relation(fields: [testId], references: [id])
-  testId     String
+  id     String @id @default(cuid())
+  name   String
+  test   Test   @relation(fields: [testId], references: [id])
+  testId String
 
-  questions      Question[]
-  subjectScores  SubjectScore[]  // 👈 added backlink
+  questions     Question[]
+  subjectScores SubjectScore[] // 👈 added backlink
 }
 
 model Question {
-  id            String        @id @default(cuid())
+  id            String  @id @default(cuid())
   questionText  String
   options       Json
   correctAnswer String?
   explanation   String?
 
-  subject     Subject   @relation(fields: [subjectId], references: [id])
-  subjectId   String
+  subject   Subject @relation(fields: [subjectId], references: [id])
+  subjectId String
 
-  answers     Answer[]  // 👈 added backlink
+  answers Answer[] // 👈 added backlink
 }
 
 model Result {
-  id              String         @id @default(cuid())
-  startedAt       DateTime
-  finishedAt      DateTime?
-  totalScore      Int
-  totalTimeTaken  Int
+  id             String    @id @default(cuid())
+  startedAt      DateTime
+  finishedAt     DateTime?
+  totalScore     Int
+  totalTimeTaken Int
 
-  user     User   @relation(fields: [userId], references: [id])
-  userId   String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 
-  test     Test   @relation(fields: [testId], references: [id])
-  testId   String
+  test   Test   @relation(fields: [testId], references: [id])
+  testId String
 
-  subjectScores  SubjectScore[]
-  answers        Answer[]        // 👈 added backlink
+  subjectScores SubjectScore[]
+  answers       Answer[] // 👈 added backlink
 }
 
 model SubjectScore {
-  id              String      @id @default(cuid())
-  score           Int
-  totalQuestions  Int
-  correct         Int
-  wrong           Int
-  timeTaken       Int
+  id             String @id @default(cuid())
+  score          Int
+  totalQuestions Int
+  correct        Int
+  wrong          Int
+  timeTaken      Int
 
-  subject   Subject   @relation(fields: [subjectId], references: [id])
+  subject   Subject @relation(fields: [subjectId], references: [id])
   subjectId String
 
-  result    Result    @relation(fields: [resultId], references: [id])
-  resultId  String
+  result   Result @relation(fields: [resultId], references: [id])
+  resultId String
 }
 
 model Answer {
-  id             String     @id @default(cuid())
+  id             String   @id @default(cuid())
   selectedOption String?
   isCorrect      Boolean?
-  answeredAt     DateTime   @default(now())
+  answeredAt     DateTime @default(now())
 
-  result     Result    @relation(fields: [resultId], references: [id])
-  resultId   String
+  result   Result @relation(fields: [resultId], references: [id])
+  resultId String
 
-  question   Question  @relation(fields: [questionId], references: [id])
+  question   Question @relation(fields: [questionId], references: [id])
   questionId String
 }

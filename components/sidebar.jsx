@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { auth } from "@clerk/nextjs/server";
+import { useAuth } from "@clerk/clerk-react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
@@ -27,11 +29,11 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { isLoaded, isSignedIn, userId, sessionId, getToken } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-
+  console.log(isSignedIn, userId);
   return (
     <>
-      {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed top-4 left-4 z-50 md:hidden p-2 hover:bg-muted rounded-lg"
@@ -39,14 +41,12 @@ export function Sidebar() {
         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
-      {/* Sidebar */}
       <aside
         className={cn(
           "fixed md:relative w-64 h-screen border-r border-border bg-sidebar text-sidebar-foreground flex flex-col transition-transform duration-300 z-40",
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
-        {/* Header */}
         <div className="p-6 border-b border-sidebar-border">
           <h1 className="text-2xl font-bold text-sidebar-primary">
             MockGenius
@@ -56,7 +56,6 @@ export function Sidebar() {
           </p>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -83,7 +82,6 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* Footer */}
         <div className="p-4 border-t border-sidebar-border space-y-2">
           <ThemeToggle />
           <Button
@@ -91,12 +89,10 @@ export function Sidebar() {
             className="w-full justify-start gap-3 text-destructive hover:text-destructive"
           >
             <LogOut className="w-4 h-4" />
-            Logout
           </Button>
         </div>
       </aside>
 
-      {/* Mobile Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-30 md:hidden"

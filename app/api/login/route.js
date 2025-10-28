@@ -5,9 +5,9 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const { username, password } = await req.json();
+    const { email, password } = await req.json();
 
-    const user = await prisma.user.findUnique({ where: { username } });
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user)
       return NextResponse.json(
         { error: "Invalid credentials" },
