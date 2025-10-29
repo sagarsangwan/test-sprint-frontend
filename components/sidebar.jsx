@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import {
   BarChart3,
   FileUp,
@@ -16,9 +16,8 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { auth } from "@clerk/nextjs/server";
-import { SignOutButton, useAuth } from "@clerk/clerk-react";
-
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
   { href: "/upload", label: "Upload", icon: FileUp },
@@ -29,9 +28,8 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { isLoaded, isSignedIn, userId, sessionId, getToken } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  console.log(isSignedIn, userId);
+
   return (
     <>
       <button
@@ -84,15 +82,15 @@ export function Sidebar() {
 
         <div className="p-4 border-t border-sidebar-border space-y-2">
           <ThemeToggle />
-          <SignOutButton redirectUrl="/">
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 text-destructive hover:text-destructive"
-            >
-              <LogOut className="w-4 h-4" />
-              Logout
-            </Button>
-          </SignOutButton>
+
+          <Button
+            variant="ghost"
+            onClick={() => signOut()}
+            className="w-full justify-start gap-3 text-destructive hover:text-destructive"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </Button>
         </div>
       </aside>
 
