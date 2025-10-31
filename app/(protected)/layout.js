@@ -6,7 +6,7 @@ import { Toaster } from "sonner";
 import { SessionProvider } from "next-auth/react";
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
-
+import NextTopLoader from "nextjs-toploader";
 export const metadata = {
   title: "MockGenius - AI Mock Test Generator",
   description: "Generate structured mock tests from PDFs using AI",
@@ -21,6 +21,7 @@ export default function RootLayout({ children }) {
             <div className="flex h-screen">
               <Sidebar />
               <main className="flex-1 overflow-auto">
+                <NextTopLoader />
                 {children}
                 <Toaster richColors position="top-right" />
               </main>
