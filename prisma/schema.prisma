@@ -77,7 +77,6 @@ model Test {
   subjects       Subject[]
   results        Result[]
   jobs           Job[] // all processing jobs (extract/split/generate)
-  accuracy       Int?
 }
 
 model Subject {

@@ -8,6 +8,11 @@ import Sidebar from "./Sidebar";
 import { toast } from "sonner";
 
 export default function TestClient({ test, session }) {
+  const testId = test.id;
+  const [isTestStarted, setIsTestStarted] = useState(false);
+  const [timerActive, setTimerActive] = useState(false);
+  const [startTime, setStartTime] = useState(null);
+
   const [started, setStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(test.totalTime * 60 || 50 * 60);
   const [subjects, setSubjects] = useState(test.subjects || []);
@@ -29,9 +34,40 @@ export default function TestClient({ test, session }) {
     return () => clearInterval(interval);
   }, [started, timeLeft, testSubmitted]);
 
-  const handleStart = () => {
-    toast.success("🚀 Test Started");
-    setStarted(true);
+  const handleStart = async () => {
+    try {
+      toast.loading("🚀 Starting your test...", { id: "start-test" });
+
+      const res = await fetch("/api/start-test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          testId,
+          userId: session?.user?.id, // if using next-auth or any logged-in user id
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Failed to start test");
+
+      // ✅ Test started successfully
+      toast.success("✅ Test started! Timer is now running.", {
+        id: "start-test",
+      });
+
+      // Update frontend state
+      setStarted(true); // show questions + enable timer
+      setTimerActive(true); // optional if you handle timer separately
+      setStartTime(Date.now()); // store when test started
+
+      console.log("🎯 Test started successfully:", data);
+    } catch (error) {
+      console.error("❌ Error starting test:", error);
+      toast.error("Failed to start test. Please try again.", {
+        id: "start-test",
+      });
+    }
   };
 
   const handleSelectAnswer = (qid, opt) => {
@@ -46,14 +82,14 @@ export default function TestClient({ test, session }) {
 
     try {
       toast.loading(`Submitting ${current.name}...`, { id: "submit-subject" });
-      const testId = test.id;
+
       const res = await fetch("/api/submit-subject", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           testId,
           subjectId: current.id,
-          userId: session?.user?.id, // if using next-auth
+          userId: session?.user?.id,
           answers: subjectAnswers,
         }),
       });
@@ -62,10 +98,9 @@ export default function TestClient({ test, session }) {
 
       if (!res.ok) throw new Error(data.error || "Failed to submit subject");
 
-      toast.success(
-        `${current.name} submitted successfully — ${data.correct}/${data.total} correct ✅`,
-        { id: "submit-subject" }
-      );
+      toast.success(`${current.name} submitted successfully `, {
+        id: "submit-subject",
+      });
 
       // mark subject as submitted
       const updated = [...submittedSubjects, currentSubject];
@@ -85,13 +120,36 @@ export default function TestClient({ test, session }) {
     }
   };
 
-  const handleSubmitTest = () => {
+  const handleSubmitTest = async () => {
     if (testSubmitted) return;
     setTestSubmitted(true);
-    console.log("✅ Test Submitted! All Answers:", answers);
-    setTimeout(() => {
-      window.location.href = "/results";
-    }, 1500);
+
+    try {
+      toast.loading("Submitting test...", { id: "submit-test" });
+
+      const res = await fetch("/api/submit-test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          testId,
+          userId: session?.user?.id, // if using next-auth
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Submission failed");
+
+      toast.success(`🎯 Test submitted!`, { id: "submit-test" });
+
+      console.log("✅ Test Summary:", data);
+
+      setTimeout(() => {
+        window.location.href = `/results?testId=${testId}`;
+      }, 2000);
+    } catch (err) {
+      console.error("❌ Error submitting test:", err);
+      toast.error("Failed to submit test. Try again.", { id: "submit-test" });
+    }
   };
 
   if (!started) {
