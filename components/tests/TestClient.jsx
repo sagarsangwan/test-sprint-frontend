@@ -15,6 +15,19 @@ export default function TestClient({ test, session }) {
 
   const [started, setStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(test.totalTime * 60 || 50 * 60);
+  const SUBJECT_ORDER = [
+    "reasoning",
+    "general_awareness",
+    "math",
+    "english",
+    "hindi",
+  ];
+
+  const orderedSubjects = (test.subjects || []).sort(
+    (a, b) =>
+      SUBJECT_ORDER.indexOf(a.name.toLowerCase()) -
+      SUBJECT_ORDER.indexOf(b.name.toLowerCase())
+  );
   const [subjects, setSubjects] = useState(test.subjects || []);
   const [currentSubject, setCurrentSubject] = useState(0);
   const [answers, setAnswers] = useState({});

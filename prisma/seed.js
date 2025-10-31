@@ -1,12 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
-// add thissssssssssssssssssssss in package.json
-// "prisma": {
-//     "seed": "node prisma/seed.js"
-//   },
-// ---- your mock data here ----
-const mockTests = Array.from({ length: 10 }, (_, i) => ({
+
+const mockTests = Array.from({ length: 5 }, (_, i) => ({
   title: `Test ${i + 1}`,
   totalTime: 5,
   userId: "cmhensw0l0000f0347low1veq",
@@ -20,64 +16,9 @@ const mockTests = Array.from({ length: 10 }, (_, i) => ({
           correctAnswer: "32",
         },
         {
-          questionText: "If all birds can fly and parrots are birds, then?",
-          options: [
-            "Parrots can't fly",
-            "Parrots can fly",
-            "Some parrots can't fly",
-            "None",
-          ],
-          correctAnswer: "Parrots can fly",
-        },
-        {
           questionText: "Find the odd one: Apple, Banana, Mango, Potato",
           options: ["Apple", "Banana", "Mango", "Potato"],
           correctAnswer: "Potato",
-        },
-        {
-          questionText: "Find the next number: 3, 6, 12, 24, ?",
-          options: ["30", "36", "42", "48"],
-          correctAnswer: "48",
-        },
-        {
-          questionText: "Which one is different: Car, Bike, Bus, Tree?",
-          options: ["Car", "Bike", "Bus", "Tree"],
-          correctAnswer: "Tree",
-        },
-      ],
-    },
-    {
-      name: "English",
-      questions: [
-        {
-          questionText: "Choose correct spelling:",
-          options: ["Occassion", "Occasion", "Ocasion", "Occassoin"],
-          correctAnswer: "Occasion",
-        },
-        {
-          questionText: "Synonym of 'Brave':",
-          options: ["Coward", "Fearless", "Weak", "Soft"],
-          correctAnswer: "Fearless",
-        },
-        {
-          questionText: "Antonym of 'Generous':",
-          options: ["Kind", "Selfish", "Benevolent", "Rich"],
-          correctAnswer: "Selfish",
-        },
-        {
-          questionText: "Find correct passive: He wrote a letter.",
-          options: [
-            "A letter was written by him.",
-            "He was written a letter.",
-            "A letter is wrote.",
-            "He wrote by a letter.",
-          ],
-          correctAnswer: "A letter was written by him.",
-        },
-        {
-          questionText: "Choose correct tense: He ____ playing now.",
-          options: ["is", "was", "were", "be"],
-          correctAnswer: "is",
         },
       ],
     },
@@ -90,31 +31,45 @@ const mockTests = Array.from({ length: 10 }, (_, i) => ({
           correctAnswer: "11",
         },
         {
-          questionText: "Simplify: 12 ÷ (3 + 1)",
-          options: ["3", "4", "2", "6"],
-          correctAnswer: "3",
-        },
-        {
           questionText: "Square root of 81?",
           options: ["8", "7", "9", "6"],
           correctAnswer: "9",
         },
+      ],
+    },
+    {
+      name: "Hindi",
+      questions: [
         {
-          questionText: "Value of (2³) × (3²)?",
-          options: ["24", "36", "72", "18"],
-          correctAnswer: "72",
+          questionText: "‘राम’ शब्द किस प्रकार का शब्द है?",
+          options: ["संज्ञा", "सर्वनाम", "क्रिया", "विशेषण"],
+          correctAnswer: "संज्ञा",
         },
         {
-          questionText: "If x=5, find 2x + 3.",
-          options: ["8", "10", "13", "15"],
-          correctAnswer: "13",
+          questionText: "‘किताबें’ शब्द का एकवचन रूप क्या होगा?",
+          options: ["किताबें", "किताबी", "किताब", "किताबीपन"],
+          correctAnswer: "किताब",
+        },
+        {
+          questionText: "‘काला’ का विलोम शब्द क्या है?",
+          options: ["गहरा", "सफेद", "अंधेरा", "धूसर"],
+          correctAnswer: "सफेद",
+        },
+        {
+          questionText: "‘जल्दी आना’ का समानार्थक वाक्य कौन सा है?",
+          options: ["धीरे आना", "शीघ्र आना", "कभी मत आना", "फिर आना"],
+          correctAnswer: "शीघ्र आना",
+        },
+        {
+          questionText: "‘कहाँ जा रहे हो?’ यह कौन-सा वाक्य है?",
+          options: ["वर्णनात्मक", "प्रश्नवाचक", "आज्ञार्थक", "विस्मयादिबोधक"],
+          correctAnswer: "प्रश्नवाचक",
         },
       ],
     },
   ],
 }));
 
-// ---- seed logic ----
 async function main() {
   for (const test of mockTests) {
     const created = await prisma.test.create({

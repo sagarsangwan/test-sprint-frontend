@@ -4,7 +4,6 @@ import { auth } from "@/lib/auth";
 
 export default async function ResultPage({ params }) {
   const { id } = await params;
-  console.log(id);
   const session = await auth();
   const userId = session?.user?.id;
 
@@ -26,7 +25,6 @@ export default async function ResultPage({ params }) {
           subjectScores: { include: { subject: true } },
           answers: true,
         },
-        // orderBy: { createdAt: "desc" },
       },
     },
   });
@@ -40,7 +38,6 @@ export default async function ResultPage({ params }) {
     );
   }
 
-  // ✅ Extract latest result
   const result = test.results[0];
   if (!result) {
     return (
@@ -52,6 +49,21 @@ export default async function ResultPage({ params }) {
   }
 
   // ✅ Build the data object for <ResultClient />
+  const allQuestions = test.subjects.flatMap((s) => s.questions);
+
+  const questionReviews = allQuestions.map((q) => {
+    const ans = result.answers.find((a) => a.questionId === q.id);
+    return {
+      id: q.id,
+      subject:
+        test.subjects.find((s) => s.id === q.subjectId)?.name || "Unknown",
+      question: q.questionText,
+      userAnswer: ans?.selectedOption || "", // empty means unattempted
+      correctAnswer: q.correctAnswer,
+      isCorrect: ans ? ans.isCorrect : false, // mark false if unattempted
+    };
+  });
+
   const data = {
     testName: test.title,
     totalScore: result.totalScore || 0,
@@ -66,21 +78,7 @@ export default async function ResultPage({ params }) {
       score: Math.round((s.correct / s.totalQuestions) * 100),
       timeTaken: s.timeTaken,
     })),
-    questionReviews: result.answers.map((a) => {
-      const q = test.subjects
-        .flatMap((s) => s.questions)
-        .find((q) => q.id === a.questionId);
-      return {
-        id: a.id,
-        subject: q
-          ? test.subjects.find((s) => s.id === q.subjectId)?.name
-          : "Unknown",
-        question: q?.questionText || "",
-        userAnswer: a.selectedOption,
-        correctAnswer: q?.correctAnswer || "",
-        isCorrect: a.isCorrect,
-      };
-    }),
+    questionReviews, // ✅ now includes unattempted questions
   };
 
   return <ResultClient resultData={data} />;
