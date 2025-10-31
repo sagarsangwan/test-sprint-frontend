@@ -143,7 +143,7 @@ export default async function TestsPage() {
                         {result.totalScore ?? 0}
                       </span>
                     </p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm ">
                       Time Taken:{" "}
                       <span className="font-semibold text-foreground">
                         {mins}m {secs}s

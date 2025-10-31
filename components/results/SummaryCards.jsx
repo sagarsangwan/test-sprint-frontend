@@ -55,9 +55,7 @@ export default function SummaryCards({
           <CardTitle>Time Taken</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold text-accent">
-            {formatTime(timeTaken)}
-          </div>
+          <div className="text-3xl font-bold ">{formatTime(timeTaken)}</div>
           <p className="text-xs text-muted-foreground">out of 50 minutes</p>
         </CardContent>
       </Card>

@@ -16,7 +16,7 @@ export default function Header({ testName, submittedAt }) {
         </Link>
         <h1 className="text-3xl font-bold text-foreground">{testName}</h1>
         <p className="text-muted-foreground mt-2">
-          Test completed on {new Date(submittedAt).toLocaleDateString()}
+          {/* Test completed on {new Date(submittedAt).toLocaleDateString()} */}
         </p>
       </div>
       <div className="flex gap-2">

@@ -56,7 +56,7 @@ export default async function ResultPage({ params }) {
     testName: test.title,
     totalScore: result.totalScore || 0,
     totalMarks: test.totalMarks || 100,
-    timeTaken: result.totalTime,
+    timeTaken: result.totalTimeTaken,
     submittedAt: result.finishedAt,
     subjects: result.subjectScores.map((s) => ({
       name: s.subject.name,

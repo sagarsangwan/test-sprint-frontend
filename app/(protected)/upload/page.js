@@ -11,12 +11,18 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react";
 import { useState, useRef } from "react";
+import { toast } from "sonner";
 
 export default function UploadPage() {
   const [uploadState, setUploadState] = useState({
     status: "idle",
     progress: 0,
   });
+  const tatti = () => {
+    toast.message(
+      "nhi nhi krle start aaja krle jbb bol diya ye nhi chl rha hai to kyu krr rha hai upload "
+    );
+  };
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -211,7 +217,9 @@ export default function UploadPage() {
                   <div className="flex flex-col md:flex-row gap-3">
                     {uploadState.status === "success" ? (
                       <>
-                        <Button className="flex-1">Start Test</Button>
+                        <Button onClick={() => tatti()} className="flex-1">
+                          Start Test
+                        </Button>
                         <Button
                           variant="outline"
                           onClick={handleReset}
