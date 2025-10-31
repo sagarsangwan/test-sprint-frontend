@@ -10,6 +10,7 @@ import { auth } from "@/lib/auth";
 import { getFormattedDate } from "@/lib/date-time-format/date-format";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function TestsPage() {
   const session = await auth();
