@@ -7,12 +7,33 @@ export default async function Home() {
   if (!session?.user) {
     redirect("/");
   }
-  const testTakenByUser = await prisma.Test.findMany({
+  const attemptedTests = await prisma.test.findMany({
     where: {
-      userId: session?.user?.id,
+      results: {
+        some: {
+          userId: session?.user?.id, // ✅ only if this user has a result
+        },
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      createdAt: true,
+      results: {
+        where: {
+          userId: session?.user?.id, // ✅ fetch only this user’s result
+        },
+        select: {
+          id: true,
+          totalScore: true,
+          totalTimeTaken: true,
+          finishedAt: true,
+        },
+      },
     },
   });
 
+  console.log(attemptedTests);
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black"></div>
   );
