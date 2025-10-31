@@ -67,16 +67,17 @@ model Test {
   totalMarks     Int
   totalTime      Int
   createdAt      DateTime  @default(now())
-  pdfFileUrl     String? // Supabase file URL
-  pdfHash        String?   @unique // For caching same PDFs
+  pdfFileUrl     String?
+  pdfHash        String?   @unique
   aiStatus       String    @default("pending") // processing | done | error
-  rawText        String? // extracted text from PDF
-  rawJson        Json? // optional for debugging or raw AI output
+  rawText        String?
+  rawJson        Json?
   userId         String?
   user           User?     @relation(fields: [userId], references: [id])
   subjects       Subject[]
   results        Result[]
   jobs           Job[] // all processing jobs (extract/split/generate)
+  accuracy       Int?
 }
 
 model Subject {

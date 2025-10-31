@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
               <Sidebar />
               <main className="flex-1 overflow-auto">
                 {children}
-                <Toaster />
+                <Toaster richColors position="top-right" />
               </main>
             </div>
           </ThemeProvider>

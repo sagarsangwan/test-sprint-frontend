@@ -9,47 +9,17 @@ export default async function TestPage({ params }) {
   if (!session?.user) {
     redirect("/");
   }
-  // const test = await prisma.Test.findUnique({
-  //   where: { id },
-  //   include: {
-  //     subjects: {
-  //       include: { questions: true },
-  //       orderBy: { name: "asc" },
-  //     },
-  //   },
-  // });
-  const mockTest = {
-    title: "DSSSB Mock Test",
-    totalTime: 1,
-    subjects: [
-      {
-        name: "Reasoning",
-        questions: Array.from({ length: 5 }).map((_, i) => ({
-          id: `r${i}`,
-          questionText: `Reasoning Question ${i + 1}`,
-          options: ["A", "B", "C", "D"],
-        })),
+  const test = await prisma.Test.findUnique({
+    where: { id },
+    include: {
+      subjects: {
+        include: { questions: true },
+        orderBy: { name: "asc" },
       },
-      {
-        name: "English",
-        questions: Array.from({ length: 5 }).map((_, i) => ({
-          id: `e${i}`,
-          questionText: `English Question ${i + 1}`,
-          options: ["A", "B", "C", "D"],
-        })),
-      },
-      {
-        name: "Math",
-        questions: Array.from({ length: 5 }).map((_, i) => ({
-          id: `m${i}`,
-          questionText: `Math Question ${i + 1}`,
-          options: ["A", "B", "C", "D"],
-        })),
-      },
-    ],
-  };
+    },
+  });
 
-  return <TestClient test={mockTest} />;
+  return <TestClient test={test} session={session} />;
 }
 
 // "use client";

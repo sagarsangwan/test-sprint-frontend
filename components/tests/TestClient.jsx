@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Timer from "./Timer";
 import Sidebar from "./Sidebar";
+import { toast } from "sonner";
 
-export default function TestClient({ test }) {
+export default function TestClient({ test, session }) {
   const [started, setStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(test.totalTime * 60 || 50 * 60);
   const [subjects, setSubjects] = useState(test.subjects || []);
@@ -29,7 +30,7 @@ export default function TestClient({ test }) {
   }, [started, timeLeft, testSubmitted]);
 
   const handleStart = () => {
-    console.log("🚀 Test Started");
+    toast.success("🚀 Test Started");
     setStarted(true);
   };
 
@@ -37,21 +38,50 @@ export default function TestClient({ test }) {
     setAnswers((prev) => ({ ...prev, [qid]: opt }));
   };
 
-  const handleSubmitSubject = () => {
+  const handleSubmitSubject = async () => {
     const current = subjects[currentSubject];
     const subjectAnswers = Object.keys(answers)
       .filter((q) => current.questions.some((x) => x.id === q))
       .reduce((obj, q) => ({ ...obj, [q]: answers[q] }), {});
 
-    console.log(`📘 ${current.name} submitted with answers:`, subjectAnswers);
+    try {
+      toast.loading(`Submitting ${current.name}...`, { id: "submit-subject" });
+      const testId = test.id;
+      const res = await fetch("/api/submit-subject", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          testId,
+          subjectId: current.id,
+          userId: session?.user?.id, // if using next-auth
+          answers: subjectAnswers,
+        }),
+      });
 
-    const updated = [...submittedSubjects, currentSubject];
-    setSubmittedSubjects(updated);
+      const data = await res.json();
 
-    if (currentSubject < subjects.length - 1) {
-      setCurrentSubject(currentSubject + 1);
-    } else {
-      handleSubmitTest();
+      if (!res.ok) throw new Error(data.error || "Failed to submit subject");
+
+      toast.success(
+        `${current.name} submitted successfully — ${data.correct}/${data.total} correct ✅`,
+        { id: "submit-subject" }
+      );
+
+      // mark subject as submitted
+      const updated = [...submittedSubjects, currentSubject];
+      setSubmittedSubjects(updated);
+
+      if (currentSubject < subjects.length - 1) {
+        setCurrentSubject(currentSubject + 1);
+      } else {
+        toast.success(" All subjects completed! Submitting final test...");
+        handleSubmitTest();
+      }
+    } catch (error) {
+      console.error(" Error submitting subject:", error);
+      toast.error(`Failed to submit ${current.name}. Try again.`, {
+        id: "submit-subject",
+      });
     }
   };
 
@@ -69,9 +99,7 @@ export default function TestClient({ test }) {
       <div className="flex items-center justify-center h-screen bg-background">
         <Card className="max-w-md">
           <CardContent className="p-6 text-center">
-            <h1 className="text-xl font-bold mb-3">
-              {test.title || "Mock Test"}
-            </h1>
+            <h1 className="text-xl font-bold mb-3">{test.title}</h1>
             <p className="text-muted-foreground mb-4">
               Duration: {test.totalTime || 50} min | Subjects: {subjects.length}
             </p>
