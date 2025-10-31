@@ -60,8 +60,6 @@ export default function TestClient({ test, session }) {
       setStarted(true); // show questions + enable timer
       setTimerActive(true); // optional if you handle timer separately
       setStartTime(Date.now()); // store when test started
-
-      console.log("🎯 Test started successfully:", data);
     } catch (error) {
       console.error("❌ Error starting test:", error);
       toast.error("Failed to start test. Please try again.", {
@@ -126,13 +124,15 @@ export default function TestClient({ test, session }) {
 
     try {
       toast.loading("Submitting test...", { id: "submit-test" });
-
+      const endTime = Date.now();
+      const totalTimeTaken = Math.floor((endTime - startTime) / 1000); // seconds
       const res = await fetch("/api/submit-test", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           testId,
-          userId: session?.user?.id, // if using next-auth
+          userId: session?.user?.id,
+          totalTimeTaken,
         }),
       });
 
@@ -140,8 +140,6 @@ export default function TestClient({ test, session }) {
       if (!res.ok) throw new Error(data.error || "Submission failed");
 
       toast.success(`🎯 Test submitted!`, { id: "submit-test" });
-
-      console.log("✅ Test Summary:", data);
 
       setTimeout(() => {
         window.location.href = `/results?testId=${testId}`;
@@ -159,7 +157,8 @@ export default function TestClient({ test, session }) {
           <CardContent className="p-6 text-center">
             <h1 className="text-xl font-bold mb-3">{test.title}</h1>
             <p className="text-muted-foreground mb-4">
-              Duration: {test.totalTime || 50} min | Subjects: {subjects.length}
+              Duration: {test.totalTimeTaken || 50} min | Subjects:{" "}
+              {subjects.length}
             </p>
             <Button onClick={handleStart} className="w-full">
               Start Test

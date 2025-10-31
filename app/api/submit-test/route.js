@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export async function POST(req) {
   try {
-    const { testId, userId } = await req.json();
+    const { testId, userId, totalTimeTaken } = await req.json();
 
     if (!testId || !userId) {
       return NextResponse.json(
@@ -52,7 +52,7 @@ export async function POST(req) {
         finishedAt: new Date(),
         totalScore: totalCorrect,
         accuracy,
-        totalTimeTaken: 0, // you can pass this from frontend timer later
+        totalTimeTaken: totalTimeTaken, // you can pass this from frontend timer later
       },
     });
 
