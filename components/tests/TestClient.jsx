@@ -142,7 +142,7 @@ export default function TestClient({ test, session }) {
       toast.success(`🎯 Test submitted!`, { id: "submit-test" });
 
       setTimeout(() => {
-        window.location.href = `/results?testId=${testId}`;
+        window.location.href = `/results/${testId}`;
       }, 2000);
     } catch (err) {
       console.error("❌ Error submitting test:", err);
