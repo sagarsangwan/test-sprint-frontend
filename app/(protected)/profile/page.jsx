@@ -20,7 +20,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Mail, Calendar, Award, TrendingUp, Edit2 } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 
 const mockUserData = {
   name: "John Doe",
@@ -91,12 +91,8 @@ const progressData = [
 ];
 
 export default function ProfilePage() {
-  const { isSignedIn, user, isLoaded } = useUser();
-  if (!isLoaded) {
-    return <div>loading</div>;
-  }
-  console.log(user);
-  console.log(user.createdAt.toDateString());
+  const { data: session, isLoading } = useSession();
+
   return (
     <div className="p-8">
       {/* Header */}
@@ -120,16 +116,14 @@ export default function ProfilePage() {
             {/* User Details */}
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-6">
-                {user.fullName}
+                {session?.user?.fullName}
               </h2>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-muted-foreground" />
                   <div>
                     <p className="text-xs text-muted-foreground">Email</p>
-                    <p className="text-foreground">
-                      {user.emailAddresses[0].emailAddress}
-                    </p>
+                    <p className="text-foreground">{session?.user?.email}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -139,7 +133,7 @@ export default function ProfilePage() {
                       Member Since
                     </p>
                     <p className="text-foreground">
-                      {user.createdAt.toDateString()}
+                      {session?.user?.createdAt}
                     </p>
                   </div>
                 </div>
