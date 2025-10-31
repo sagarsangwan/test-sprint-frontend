@@ -157,8 +157,7 @@ export default function TestClient({ test, session }) {
           <CardContent className="p-6 text-center">
             <h1 className="text-xl font-bold mb-3">{test.title}</h1>
             <p className="text-muted-foreground mb-4">
-              Duration: {test.totalTimeTaken || 50} min | Subjects:{" "}
-              {subjects.length}
+              Duration: {test.totalTime || 50} min | Subjects: {subjects.length}
             </p>
             <Button onClick={handleStart} className="w-full">
               Start Test
